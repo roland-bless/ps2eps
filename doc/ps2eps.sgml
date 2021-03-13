@@ -650,7 +650,7 @@
       TROUBLESHOOTING
     <!-- <xref linkend="TROUBLESHOOTING" endterm="TROUBLESHOOTING.title"/> --> 
     first. Otherwise, check for an updated
-    version at <ulink URL="http://www.tm.uka.de/~bless/ps2eps"></ulink>
+    version at <ulink URL="https://github.com/roland-bless/ps2eps"></ulink>
     or send a gzipped file of
     relevant postscript source code with your error description 
     and &ps2eps; version number to &dhemail; (please allow some time
