@@ -4,25 +4,25 @@
 /** Author:    Roland Bless <roland -at- bless.de>                 **/
 /** Copyright (C) 1998-2020 Roland Bless                           **/
 /** To compile simply use:                                         **/
-/** "cc bbox.c -o bbox" or "make bbox"                             **/ 
+/** "cc bbox.c -o bbox" or "make bbox"                             **/
 /********************************************************************/
 /*
  * $Id: bbox.c 146 2021-03-12 20:26:23Z bless $
  */
 
 /**
-* This program is free software; you can redistribute it and/or modify     
-* it under the terms of the GNU General Public License as published by     
-* the Free Software Foundation; either version 2 of the License, or        
-* (at your option) any later version.                                      
-*                                                                          
-* This program is distributed in the hope that it will be useful,          
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            
-* GNU General Public License for more details.                             
-*                                                                           
-* You should have received a copy of the GNU General Public License        
-* along with this program; if not, write to the Free Software              
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *
 **/
@@ -70,12 +70,12 @@ unsigned char bitval[8]=
   1
 };
 
-unsigned int minus_one(const unsigned x) 
+unsigned int minus_one(const unsigned x)
 {
   return (x == 0) ? x : x-1;
 }
 
-unsigned int plus_one(const unsigned x) 
+unsigned int plus_one(const unsigned x)
 {
   return (x == (unsigned int) ~0U) ? x : x+1;
 }
@@ -96,8 +96,8 @@ unsigned int plus_one(const unsigned x)
 *       and printed to stdout                                           *
 ************************************************************************/
 /* calculate the bounding box in postscript points, given a resolution in dpi */
-void readppm_and_calcbb(const char *name, 
-                        const unsigned int resolution, 
+void readppm_and_calcbb(const char *name,
+                        const unsigned int resolution,
                         const unsigned char tight)
 {
 	FILE 	*inputfile;
@@ -110,28 +110,28 @@ void readppm_and_calcbb(const char *name,
         double       hllx, hlly, hurx, hury; /* hires bounding box */
         unsigned char   *image_row,	 /* ImageRow */
                         *tmpcolumnbytep;
-        unsigned int 	width,height;	 /* Image Size	*/ 
+        unsigned int 	width,height;	 /* Image Size	*/
         unsigned int    byte_width;
         unsigned char   colormax= 0;       /* max color value */
         unsigned int    ui_colormax= 0;    /* max color value */
-        
- 	if ( name == NULL ) 
+
+ 	if ( name == NULL )
         {
           inputfile = stdin;
           name = "- STDIN -";
 	}
-	else 	
+	else
         {
           inputfile = fopen(name,"r");
           if ( inputfile == NULL )
           {
-            fprintf(stderr,"%s: ERROR -- could not open file %s\n", 
+            fprintf(stderr,"%s: ERROR -- could not open file %s\n",
                     prgname, name);
             exit(1);
           }
         }
         /** check for magic number **/
-        do 
+        do
         {
 		if (fgets(inputline, inputlinelength, inputfile) == NULL) {
 			fprintf(stderr,"%s: ERROR -- unexpected end of file %s\n", prgname, name);
@@ -152,7 +152,7 @@ void readppm_and_calcbb(const char *name,
           }
         }
         while ( !feof(inputfile) && !magic_found );
-        
+
         if ( !magic_found )
         {
           fprintf(stderr,"%s: ERROR -- %s is not in ppmraw or pbmraw format\n",
@@ -161,7 +161,7 @@ void readppm_and_calcbb(const char *name,
 	  exit(1);
         }
         /** skip comments **/
-        do 
+        do
         {
 	   if (fgets(inputline, inputlinelength, inputfile) == NULL) {
 		   fprintf(stderr,"%s: ERROR -- unexpected end of file %s\n", prgname, name);
@@ -186,15 +186,15 @@ void readppm_and_calcbb(const char *name,
 		  fclose(inputfile);
 		  exit(1);
 	  }
-	  sscanf(inputline,"%u",&ui_colormax);  
+	  sscanf(inputline,"%u",&ui_colormax);
 	  colormax = (unsigned char) ui_colormax; /* this is safer */
         }
 #ifdef DEBUG
 	fprintf(stderr,"\nreading picture: %s size X: %u Y: %u\n",name,width,height);
 #endif
         x_min= width>0 ? width-1 : 0;
-        x_max= 0; 
-        y_min= height>0 ? height-1 : 0; 
+        x_max= 0;
+        y_min= height>0 ? height-1 : 0;
         y_max= 0;
         if ( magic_found == 4 ) /* PBMRAW = Bitmap */
         { /** read raw pbmfile **/
@@ -203,12 +203,12 @@ void readppm_and_calcbb(const char *name,
             byte_width++;
         }
         else /** assume ppm raw **/
-        { 
+        {
           byte_width= width * 3; /* we have RGB, i.e. three bytes for each pixel */
         }
-	/* 
+	/*
 	 * Now read a raster of Width * Height pixels, proceeding through the image in normal English reading order,
-         * i.e., starting from top left then moving right 
+         * i.e., starting from top left then moving right
 	 */
 	/* we allocate only one line */
         image_row= malloc(byte_width);
@@ -269,8 +269,8 @@ void readppm_and_calcbb(const char *name,
             { /* there was a pixel with no background color */
               tmpcolumnbytep= image_row+byte_width-1;
               /* inspect this line from the right */
-              for (byte_x= byte_width-1; 
-                   byte_x >= 0; 
+              for (byte_x= byte_width-1;
+                   byte_x >= 0;
                    byte_x--,tmpcolumnbytep--)
               {
                 if ( *tmpcolumnbytep != colormax ) /* there are pixels not white */
@@ -303,7 +303,7 @@ void readppm_and_calcbb(const char *name,
                        y_min,y_max,x_min,x_max);
 #endif
                   break;
-                } /* if there are pixels not white */ 
+                } /* if there are pixels not white */
               } /* end for byte_x */
             } /* if line contained not only background color */
           } /* end for y */
@@ -314,7 +314,7 @@ void readppm_and_calcbb(const char *name,
             hllx= (x_min*pt_dpi_dbl)/resolution;
             /* distance from the bottom edge to the bottommost point */
             hlly= ((minus_one(height)-y_max)*pt_dpi_dbl)/resolution;
-            /* distance from the left edge to the righmost point  */ 
+            /* distance from the left edge to the righmost point  */
 	    hurx= (plus_one(x_max)*pt_dpi_dbl)/resolution;
             /* distance from the bottom edge to the uppermost point */
             hury= ((height-y_min)*pt_dpi_dbl)/resolution;
@@ -326,7 +326,7 @@ void readppm_and_calcbb(const char *name,
             llx= minus_one((unsigned int) ((unsigned long) x_min*72UL)/resolution);
             /* distance from the bottom edge to the bottommost point */
             lly= minus_one((unsigned int) ((unsigned long) (minus_one(height)-y_max)*72UL)/resolution);
-            /* distance from the left edge to the righmost point  */ 
+            /* distance from the left edge to the righmost point  */
             urx= plus_one((unsigned int) ((unsigned long) plus_one(x_max)*72UL)/resolution);
             /* distance from the bottom edge to the uppermost point */
             ury= plus_one((unsigned int) ((unsigned long) (height-y_min)*72UL)/resolution);
@@ -346,7 +346,7 @@ void readppm_and_calcbb(const char *name,
             llx= (unsigned int) ((unsigned long) x_min*72UL)/resolution;
             /* distance from the bottom edge to the bottommost point */
             lly= (unsigned int) ((unsigned long) (minus_one(height)-y_max)*72UL)/resolution;
-            /* distance from the left edge to the righmost point  */ 
+            /* distance from the left edge to the righmost point  */
             urx= (unsigned int) ((unsigned long) plus_one(x_max)*72UL)/resolution;
 	    /* round up if we got a remainder */
             if ( (((unsigned long) plus_one(x_max)*72UL) % resolution) != 0 )
@@ -368,15 +368,15 @@ void readppm_and_calcbb(const char *name,
         }
         else
           fprintf(stderr,"%s: ERROR -- not enough memory to read in one row of the picture\n", prgname);
-        
+
 	fclose(inputfile);
         free(image_row);
 }
 
 
-int	
+int
 main(int argc, char **argv)
-{ 
+{
   int i;
   char *filename= NULL;
   unsigned int resolution= 72; /* use 72 dpi as default resolution */
